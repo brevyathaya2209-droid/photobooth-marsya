@@ -152,14 +152,15 @@
             ctx.drawImage(frameImage, 0, 0, targetWidth, targetHeight);
 
             // 2. Setting Foto (SANGAT NAIK & ZOOM)
-            const photoWidth = targetWidth * 0.88; // Zoom lebih besar
-            const photoHeight = photoWidth * 1.5; 
-            const x = (targetWidth - photoWidth) / 2;
+            const photoWidth = targetWidth * 0.92; // Zoom lebih besar lagi
+            const photoHeight = photoWidth * 1.5;  // Tetap rasio 2:3
+            const x = (targetWidth - photoWidth) / 2; // Center horizontal
 
+            // Angka Y dibuat sangat kecil/negatif sedikit agar mepet ke atas
             const yPositions = [
-                targetHeight * 0.012, // Sangat Naik
-                targetHeight * 0.262, 
-                targetHeight * 0.512  
+            targetHeight * 0.002, // Slot 1 (Naik drastis)
+            targetHeight * 0.252, // Slot 2 (Naik drastis)
+            targetHeight * 0.502  // Slot 3 (Naik drastis)
             ];
 
             let loaded = 0;
