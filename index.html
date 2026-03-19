@@ -227,25 +227,24 @@
         }
 
         function captureImage() {
-            // Kita buat canvas sementara untuk menangkap foto dari video feed
             const tempCanvas = document.createElement('canvas');
-            const videoRatio = video.videoWidth / video.videoHeight;
+            // Menentukan lebar berdasarkan video asli
             const captureWidth = video.videoWidth;
-            const captureHeight = captureWidth / (3/4); // Paksa aspek rasio 3:4
+            // Menghitung tinggi agar rasio menjadi 2:3 (Tinggi = Lebar * 1.5)
+            const captureHeight = captureWidth * 1.5; 
 
             tempCanvas.width = captureWidth;
             tempCanvas.height = captureHeight;
             const ctx = tempCanvas.getContext('2d');
-
-            // Mirroring (opsional, karena hasil akhirnya nanti akan diunduh)
-            // ctx.translate(captureWidth, 0);
-            // ctx.scale(-1, 1);
             
-            // Gambar video ke canvas, sesuaikan jika rasio berbeda
-            ctx.drawImage(video, 0, (video.videoHeight - captureHeight) / 2, captureWidth, captureHeight, 0, 0, captureWidth, captureHeight);
+            // Mengambil bagian tengah video agar tidak terlihat gepeng (cropped)
+            const sourceY = (video.videoHeight - (video.videoWidth * 1.5)) / 2;
+            
+            ctx.drawImage(video, 0, sourceY, video.videoWidth, video.videoWidth * 1.5, 0, 0, captureWidth, captureHeight);
             
             photos.push(tempCanvas.toDataURL('image/png'));
         }
+
 
         function resetSession() {
             document.getElementById('start-btn').classList.remove('hidden');
@@ -277,16 +276,16 @@
             // Anggap bingkai Anda memiliki 3 slot foto. Kita harus menghitung 
             // koordinat X, Y, serta lebar & tinggi masing-masing slot.
 
-                        // --- SETTING POSISI FOTO BARU ---
-            const photoWidth = targetWidth * 0.86; // Lebar foto
-            const photoHeight = photoWidth * (0.78); // Tinggi foto disesuaikan lubang
-            const x = targetWidth * 0.07; // Geser ke kanan sedikit agar pas di tengah lubang
+            // --- SETTING POSISI FOTO RASIO 2:3 ---
+            const photoWidth = targetWidth * 0.86; 
+            const photoHeight = photoWidth * 1.5; // Ini adalah rasio 2:3
+            const x = targetWidth * 0.07; 
 
-            // Koordinat Y (Tinggi/Vertikal) untuk masing-masing lubang (Atas, Tengah, Bawah)
+            // Koordinat Y disesuaikan sedikit karena foto sekarang lebih panjang ke bawah
             const yPositions = [
-                targetHeight * 0.065, // Lubang Atas
-                targetHeight * 0.322, // Lubang Tengah
-                targetHeight * 0.578  // Lubang Bawah
+                targetHeight * 0.055, // Lubang Atas
+                targetHeight * 0.312, // Lubang Tengah
+                targetHeight * 0.568  // Lubang Bawah
             ];
 
             for (let i = 0; i < 3; i++) {
@@ -299,6 +298,7 @@
                 };
                 img.src = photos[i];
             }
+
 
 
             navigateTo('result');
