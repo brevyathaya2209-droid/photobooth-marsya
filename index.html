@@ -281,16 +281,17 @@
             // Anggap bingkai Anda memiliki 3 slot foto. Kita harus menghitung 
             // koordinat X, Y, serta lebar & tinggi masing-masing slot.
 
-            // --- SETTING POSISI FOTO PRESISI ---
-            const photoWidth = targetWidth * 0.82; // Sedikit diperkecil agar tidak menabrak garis putih
+            // --- SETTING POSISI FOTO BARU (PRESISI) ---
+            const photoWidth = targetWidth * 0.77; 
             const photoHeight = photoWidth / (2 / 3); 
-            const x = targetWidth * 0.09; // Geser sedikit ke kanan agar center
+            const x = targetWidth * 0.115; 
 
             const yPositions = [
-                targetHeight * 0.075, // Lubang Atas
-                targetHeight * 0.325, // Lubang Tengah
-                targetHeight * 0.575  // Lubang Bawah
+                targetHeight * 0.078, // Slot Atas
+                targetHeight * 0.328, // Slot Tengah
+                targetHeight * 0.578  // Slot Bawah
             ];
+
 
             for (let i = 0; i < 3; i++) {
                 const img = new Image();
