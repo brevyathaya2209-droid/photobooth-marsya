@@ -119,7 +119,7 @@
         </div>
         
         <div id="capture-controls" class="flex flex-col gap-4 w-full items-center">
-            <button id="start-btn" onclick="startSession()" class="btn-primary">Ambil Foto (3 Detik)</button>
+            <button id="start-btn" onclick="startSession()" class="btn-primary">Ambil Foto (5 Detik)</button>
             <div id="post-capture-options" class="hidden flex-row">
                 <button onclick="resetSession()" class="btn-primary btn-secondary">Retake</button>
                 <button onclick="generateStrip()" class="btn-primary">Lanjut</button>
@@ -228,22 +228,27 @@
 
         function captureImage() {
             const tempCanvas = document.createElement('canvas');
-            // Menentukan lebar berdasarkan video asli
-            const captureWidth = video.videoWidth;
-            // Menghitung tinggi agar rasio menjadi 2:3 (Tinggi = Lebar * 1.5)
-            const captureHeight = captureWidth * 1.5; 
+            
+            // Kita tentukan target rasio 2:3
+            const targetRatio = 2 / 3;
+            
+            // Tentukan ukuran canvas (kita gunakan lebar asli video)
+            const sw = video.videoWidth;
+            const sh = video.videoWidth / targetRatio; // Menghitung tinggi ideal 2:3
 
-            tempCanvas.width = captureWidth;
-            tempCanvas.height = captureHeight;
+            tempCanvas.width = sw;
+            tempCanvas.height = sh;
             const ctx = tempCanvas.getContext('2d');
-            
-            // Mengambil bagian tengah video agar tidak terlihat gepeng (cropped)
-            const sourceY = (video.videoHeight - (video.videoWidth * 1.5)) / 2;
-            
-            ctx.drawImage(video, 0, sourceY, video.videoWidth, video.videoWidth * 1.5, 0, 0, captureWidth, captureHeight);
+
+            // Hitung titik tengah agar tidak gepeng (Cropping tengah)
+            const sourceY = (video.videoHeight - sh) / 2;
+
+            // Gambar ke canvas: drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+            ctx.drawImage(video, 0, sourceY, sw, sh, 0, 0, sw, sh);
             
             photos.push(tempCanvas.toDataURL('image/png'));
         }
+
 
 
         function resetSession() {
@@ -276,16 +281,15 @@
             // Anggap bingkai Anda memiliki 3 slot foto. Kita harus menghitung 
             // koordinat X, Y, serta lebar & tinggi masing-masing slot.
 
-            // --- SETTING POSISI FOTO RASIO 2:3 ---
-            const photoWidth = targetWidth * 0.86; 
-            const photoHeight = photoWidth * 1.5; // Ini adalah rasio 2:3
-            const x = targetWidth * 0.07; 
+            // --- SETTING POSISI FOTO PRESISI ---
+            const photoWidth = targetWidth * 0.82; // Sedikit diperkecil agar tidak menabrak garis putih
+            const photoHeight = photoWidth / (2 / 3); 
+            const x = targetWidth * 0.09; // Geser sedikit ke kanan agar center
 
-            // Koordinat Y disesuaikan sedikit karena foto sekarang lebih panjang ke bawah
             const yPositions = [
-                targetHeight * 0.055, // Lubang Atas
-                targetHeight * 0.312, // Lubang Tengah
-                targetHeight * 0.568  // Lubang Bawah
+                targetHeight * 0.075, // Lubang Atas
+                targetHeight * 0.325, // Lubang Tengah
+                targetHeight * 0.575  // Lubang Bawah
             ];
 
             for (let i = 0; i < 3; i++) {
@@ -298,6 +302,7 @@
                 };
                 img.src = photos[i];
             }
+
 
 
 
