@@ -277,35 +277,29 @@
             // Anggap bingkai Anda memiliki 3 slot foto. Kita harus menghitung 
             // koordinat X, Y, serta lebar & tinggi masing-masing slot.
 
-            // CONTOH ASUMSI (Sesuaikan koordinat ini):
-            const photoWidth = targetWidth * 0.9; // Foto sedikit lebih kecil dari bingkai
-            const photoHeight = photoWidth * (3/4); // Pertahankan rasio 3:4
-            const x = (targetWidth - photoWidth) / 2; // Pusatkan horizontal
-            
-            const padding = (targetHeight - (photoHeight * 3)) / 4; // Jeda vertikal yang sama
+                        // --- SETTING POSISI FOTO BARU ---
+            const photoWidth = targetWidth * 0.86; // Lebar foto
+            const photoHeight = photoWidth * (0.78); // Tinggi foto disesuaikan lubang
+            const x = targetWidth * 0.07; // Geser ke kanan sedikit agar pas di tengah lubang
+
+            // Koordinat Y (Tinggi/Vertikal) untuk masing-masing lubang (Atas, Tengah, Bawah)
+            const yPositions = [
+                targetHeight * 0.065, // Lubang Atas
+                targetHeight * 0.322, // Lubang Tengah
+                targetHeight * 0.578  // Lubang Bawah
+            ];
 
             for (let i = 0; i < 3; i++) {
                 const img = new Image();
                 img.onload = () => {
-                    const y = padding + (photoHeight + padding) * i; // Posisi Y untuk masing-masing foto
-                    
-                    // Gambar foto DI BELAKANG bingkai dengan mengubah komposisi.
-                    // Jika PNG frame Anda belum transparan, foto ini tidak akan terlihat.
+                    const y = yPositions[i]; 
                     ctx.globalCompositeOperation = 'destination-over';
                     ctx.drawImage(img, x, y, photoWidth, photoHeight);
-                    ctx.globalCompositeOperation = 'source-over'; // Reset komposisi
+                    ctx.globalCompositeOperation = 'source-over';
                 };
                 img.src = photos[i];
             }
 
-            // Atur tombol unduh
-            const downloadBtn = document.getElementById('download-btn');
-            downloadBtn.onclick = () => {
-                const link = document.createElement('a');
-                link.download = 'Marsyaa-KpopPhotobooth.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            };
 
             navigateTo('result');
         }
