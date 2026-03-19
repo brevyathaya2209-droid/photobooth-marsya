@@ -281,30 +281,31 @@
             // Anggap bingkai Anda memiliki 3 slot foto. Kita harus menghitung 
             // koordinat X, Y, serta lebar & tinggi masing-masing slot.
 
-            // --- SETTING POSISI FOTO BARU (PRESISI) ---
-            const photoWidth = targetWidth * 0.77; 
-            const photoHeight = photoWidth / (2 / 3); 
-            const x = targetWidth * 0.115; 
+            // === Langkah 3: Mengedit Posisi dan Zoom Foto ke Lubang Bingkai (GANTI KODE INI) ===
+            const photoWidth = targetWidth * 0.82; // Zoom: Memperbesar lebar foto agar lebih padat (misal dari 0.77 jadi 0.82)
+            const photoHeight = photoWidth / (2 / 3); // Menjaga rasio tetap 2:3
+            const x = targetWidth * 0.09; // Menggeser sedikit ke kanan agar center setelah dizoom
 
-            // --- SETTING POSISI FOTO LEBIH NAIK ---
+            // Menurunkan angka desimal agar foto naik (misal dari 0.060 jadi 0.045)
             const yPositions = [
-                targetHeight * 0.060, // Slot Atas (Naik 1.8%)
-                targetHeight * 0.310, // Slot Tengah (Naik 1.8%)
-                targetHeight * 0.560  // Slot Bawah (Naik 1.8%)
+                targetHeight * 0.045, // Slot Atas (Naik 1.5% lebih tinggi)
+                targetHeight * 0.295, // Slot Tengah (Naik 1.5% lebih tinggi)
+                targetHeight * 0.545  // Slot Bawah (Naik 1.5% lebih tinggi)
             ];
-
-
 
             for (let i = 0; i < 3; i++) {
                 const img = new Image();
                 img.onload = () => {
                     const y = yPositions[i]; 
+                    
+                    // Kita akan menaruh foto DI BELAKANG bingkai agar terlihat rapi
                     ctx.globalCompositeOperation = 'destination-over';
                     ctx.drawImage(img, x, y, photoWidth, photoHeight);
                     ctx.globalCompositeOperation = 'source-over';
                 };
                 img.src = photos[i];
             }
+
 
 
 
