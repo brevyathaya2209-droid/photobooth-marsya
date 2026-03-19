@@ -282,29 +282,43 @@
             // koordinat X, Y, serta lebar & tinggi masing-masing slot.
 
             // === Langkah 3: Mengedit Posisi dan Zoom Foto ke Lubang Bingkai (GANTI KODE INI) ===
-            const photoWidth = targetWidth * 0.82; // Zoom: Memperbesar lebar foto agar lebih padat (misal dari 0.77 jadi 0.82)
+            // === HAPUS ANGKA 0.82 DI BARIS 285 DAN GANTI MENJADI 0.90 ===
+            const photoWidth = targetWidth * 0.90; 
+
             const photoHeight = photoWidth / (2 / 3); // Menjaga rasio tetap 2:3
             const x = targetWidth * 0.09; // Menggeser sedikit ke kanan agar center setelah dizoom
 
-            // Menurunkan angka desimal agar foto naik (misal dari 0.060 jadi 0.045)
+            // === GANTI BLOK INI (BARIS 290-294) AGAR FOTO SANGAT NAIK ===
             const yPositions = [
-                targetHeight * 0.045, // Slot Atas (Naik 1.5% lebih tinggi)
-                targetHeight * 0.295, // Slot Tengah (Naik 1.5% lebih tinggi)
-                targetHeight * 0.545  // Slot Bawah (Naik 1.5% lebih tinggi)
+            targetHeight * 0.015, // Slot Atas (Sangat Naik, pas di lubang paling atas bingkai 2:3)
+            targetHeight * 0.265, // Slot Tengah
+            targetHeight * 0.515  // Slot Bawah
             ];
 
+
+            let loadedPhotos = 0;
             for (let i = 0; i < 3; i++) {
                 const img = new Image();
                 img.onload = () => {
                     const y = yPositions[i]; 
-                    
-                    // Kita akan menaruh foto DI BELAKANG bingkai agar terlihat rapi
                     ctx.globalCompositeOperation = 'destination-over';
                     ctx.drawImage(img, x, y, photoWidth, photoHeight);
                     ctx.globalCompositeOperation = 'source-over';
+                    
+                    loadedPhotos++;
+                    if (loadedPhotos === 3) {
+                        const downloadBtn = document.getElementById('download-btn');
+                        downloadBtn.onclick = () => {
+                            const link = document.createElement('a');
+                            link.download = 'Marsyaa-Photobooth.png';
+                            link.href = canvas.toDataURL('image/png');
+                            link.click();
+                        };
+                    }
                 };
                 img.src = photos[i];
             }
+
 
 
 
