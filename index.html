@@ -33,7 +33,7 @@ body {
 }
 
 .btn-secondary {
-    background:#ccc;
+    background:#D7D3CB;
     padding:14px;
     border-radius:50px;
     width:100%;
@@ -47,6 +47,7 @@ body {
     background:black;
     overflow:hidden;
     border-radius:12px;
+    position:relative;
 }
 
 #camera-feed {
@@ -56,29 +57,70 @@ body {
     transform:scaleX(-1);
 }
 
+#countdown-container {
+    position:absolute;
+    inset:0;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,0.3);
+}
+
+#countdown-text {
+    color:white;
+    font-size:80px;
+    font-weight:bold;
+}
+
+#flash {
+    position:fixed;
+    inset:0;
+    background:white;
+    display:none;
+    z-index:100;
+}
+
+.flash-active {
+    display:block;
+    animation:flash 0.4s forwards;
+}
+
+@keyframes flash {
+    from {opacity:1;}
+    to {opacity:0;}
+}
+
 #final-strip-canvas {
     max-width:100%;
     margin-bottom:1rem;
+    border-radius:10px;
 }
 </style>
 </head>
 
 <body>
 
+<div id="flash"></div>
+
 <div id="home-screen" class="screen active">
-    <h1>Photobooth for Marsya</h1>
-    <button onclick="startSession()" class="btn-primary">Mulai</button>
+    <h1 style="font-weight:800;margin-bottom:20px;">Photobooth for Marsya</h1>
+    <button onclick="startSession()" class="btn-primary">Mulai Sekarang</button>
 </div>
 
 <div id="camera-screen" class="screen">
     <div id="camera-container">
         <video id="camera-feed" autoplay playsinline></video>
+        <div id="countdown-container">
+            <div id="countdown-text">5</div>
+        </div>
     </div>
+    <p id="session-info">Foto 1 dari 3</p>
 </div>
 
 <div id="result-screen" class="screen">
     <canvas id="final-strip-canvas"></canvas>
-    <button id="download-btn" class="btn-primary">Unduh</button>
+    <button id="download-btn" class="btn-primary">Unduh Foto</button>
+    <button onclick="retakeAll()" class="btn-secondary">Foto Ulang</button>
 </div>
 
 <script>
@@ -99,29 +141,71 @@ async function startSession(){
     photos=[];
     navigateTo('camera');
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-        video:{facingMode:"user"},
-        audio:false
-    });
+    try{
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video:{facingMode:"user"},
+            audio:false
+        });
 
-    video.srcObject = stream;
+        video.srcObject = stream;
 
-    for(let i=0;i<3;i++){
-        await new Promise(r=>setTimeout(r,2000));
-        captureImage();
+        for(let i=1;i<=3;i++){
+            document.getElementById('session-info').innerText=`Foto ${i} dari 3`;
+
+            await runCountdown(5);
+            triggerFlash();
+            captureImage();
+
+            if(i<3) await new Promise(r=>setTimeout(r,1000));
+        }
+
+        generateStrip();
+
+    }catch{
+        alert("Kamera tidak dapat diakses");
+        navigateTo('home');
     }
+}
 
-    generateStrip();
+function runCountdown(sec){
+    return new Promise(resolve=>{
+        let n=sec;
+        const box=document.getElementById('countdown-container');
+        const text=document.getElementById('countdown-text');
+
+        box.style.display='flex';
+        text.innerText=n;
+
+        const i=setInterval(()=>{
+            n--;
+            if(n>0){
+                text.innerText=n;
+            }else{
+                clearInterval(i);
+                box.style.display='none';
+                resolve();
+            }
+        },1000);
+    });
+}
+
+function triggerFlash(){
+    const f=document.getElementById('flash');
+    f.classList.add('flash-active');
+    setTimeout(()=>f.classList.remove('flash-active'),400);
 }
 
 function captureImage(){
     const c=document.createElement('canvas');
-    c.width=video.videoWidth;
-    c.height=video.videoHeight;
+    const sw=video.videoWidth;
+    const sh=video.videoHeight;
+
+    c.width=sw;
+    c.height=sh;
 
     const ctx=c.getContext('2d');
 
-    ctx.translate(c.width,0);
+    ctx.translate(sw,0);
     ctx.scale(-1,1);
     ctx.drawImage(video,0,0);
 
@@ -130,7 +214,6 @@ function captureImage(){
 
 function generateStrip(){
 
-    // tunggu frame load
     if (!frameImage.complete) {
         frameImage.onload = generateStrip;
         return;
@@ -145,15 +228,15 @@ function generateStrip(){
     canvas.width=targetWidth;
     canvas.height=targetHeight;
 
-    // ukuran slot foto
-    const photoWidth=targetWidth*0.9;
-    const photoHeight=targetHeight*0.27;
-    const x=(targetWidth-photoWidth)/2;
+    // 🔥 SLOT FIX PRESISI
+    const photoWidth = targetWidth * 0.88;
+    const photoHeight = targetHeight * 0.235;
+    const x = (targetWidth - photoWidth) / 2;
 
-    const yPositions=[
-        targetHeight*0.14,
-        targetHeight*0.39,
-        targetHeight*0.64
+    const yPositions = [
+        targetHeight * 0.155,
+        targetHeight * 0.435,
+        targetHeight * 0.715
     ];
 
     let loaded=0;
@@ -190,7 +273,7 @@ function generateStrip(){
             loaded++;
 
             if(loaded===3){
-                // frame di atas (FINAL)
+                // 🔥 FRAME DI ATAS (FINAL)
                 ctx.drawImage(frameImage,0,0,targetWidth,targetHeight);
                 prepareDownload(canvas);
             }
@@ -209,10 +292,14 @@ function generateStrip(){
 function prepareDownload(canvas){
     document.getElementById('download-btn').onclick=()=>{
         const a=document.createElement('a');
-        a.download='photobooth.png';
+        a.download='Photobooth-Marsya.png';
         a.href=canvas.toDataURL();
         a.click();
     };
+}
+
+function retakeAll(){
+    navigateTo('home');
 }
 
 </script>
