@@ -54,7 +54,6 @@
 
     <script>
         const FRAME_IMAGE_SRC = 'frame.png';
-        const FRAME_IMAGE_RATIO = 1 / 3; 
         
         let photos = [];
         let video = document.getElementById('camera-feed');
@@ -140,11 +139,16 @@
         }
 
         function generateStrip() {
+
+            if (!frameImage.complete) {
+            frameImage.onload = generateStrip;
+            return;
+            }
             const canvas = document.getElementById('final-strip-canvas');
             const ctx = canvas.getContext('2d');
 
-            const targetWidth = 600; 
-            const targetHeight = targetWidth / FRAME_IMAGE_RATIO;
+            const targetWidth = 600;
+            const targetHeight = frameImage.height * (targetWidth / frameImage.width);
             canvas.width = targetWidth;
             canvas.height = targetHeight;
 
