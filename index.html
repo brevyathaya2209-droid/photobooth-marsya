@@ -155,13 +155,18 @@
             const photoWidth = targetWidth * 0.92; // Zoom lebih besar lagi
             const photoHeight = photoWidth * 1.5;  // Tetap rasio 2:3
             const x = (targetWidth - photoWidth) / 2; // Center horizontal
-
-            // Angka Y dibuat sangat kecil/negatif sedikit agar mepet ke atas
+            
+            // === Koordinat Akurat Berdasarkan File frame.png ===
             const yPositions = [
-            targetHeight * 0.02, // Slot 1 (Turun agar pas di lubang paling atas kpop)
-            targetHeight * 0.27, // Slot 2 (Naik 1.5% lebih tinggi)
-            targetHeight * 0.52  // Slot 3 (Naik 1.5% lebih tinggi)
+                targetHeight * 0.07,  // Slot 1 (Atas)
+                targetHeight * 0.315, // Slot 2 (Tengah)
+                targetHeight * 0.56   // Slot 3 (Bawah)
             ];
+
+            // Tambahan: Agar foto mengisi penuh lubang hitam (Zoom)
+            const photoWidth = targetWidth * 0.88; 
+            const x = (targetWidth - photoWidth) / 2;
+
 
 
             let loaded = 0;
