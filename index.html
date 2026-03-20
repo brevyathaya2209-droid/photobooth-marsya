@@ -158,10 +158,18 @@
 
             // Angka Y dibuat sangat kecil/negatif sedikit agar mepet ke atas
             const yPositions = [
-            targetHeight * 0.02, // Slot 1 (Turun agar pas di lubang paling atas kpop)
-            targetHeight * 0.27, // Slot 2 (Naik 1.5% lebih tinggi)
-            targetHeight * 0.52  // Slot 3 (Naik 1.5% lebih tinggi)
+                        // === Setting Foto: Ukuran Pas & Naik Maksimal ===
+            const photoWidth = targetWidth * 0.82; // Ukuran standar (tanpa zoom berlebih)
+            const photoHeight = photoWidth * 1.5;  // Rasio tetap 2:3
+            const x = (targetWidth - photoWidth) / 2; // Center horizontal
+
+            // Angka negatif agar foto bergeser ke atas menutupi area kosong
+            const yPositions = [
+                targetHeight * -0.015, // Slot 1 (Naik untuk tutup celah atas)
+                targetHeight * 0.235,  // Slot 2 (Naik untuk tutup celah atas)
+                targetHeight * 0.485   // Slot 3 (Naik untuk tutup celah atas)
             ];
+
 
 
             let loaded = 0;
