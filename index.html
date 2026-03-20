@@ -164,12 +164,13 @@
             const x = (targetWidth - photoWidth) / 2; // Center horizontal
 
             // Angka negatif agar foto bergeser ke atas menutupi area kosong
-            const yPositions = [
-                targetHeight * -0.015, // Slot 1 (Naik untuk tutup celah atas)
-                targetHeight * 0.235,  // Slot 2 (Naik untuk tutup celah atas)
-                targetHeight * 0.485   // Slot 3 (Naik untuk tutup celah atas)
-            ];
+                        const yPositions = [
+                targetHeight * -0.015, 
+                targetHeight * 0.235,  
+                targetHeight * 0.485   
+            ]; // <--- Pastikan ada tanda ini
 
+        } // <--- Pastikan ada tanda ini untuk menutup fungsi generateStrip
 
 
             let loaded = 0;
